@@ -1,0 +1,23 @@
+{
+  "handle": "TheWineryBooks",
+  "name": "The Winery Books",
+  "site": "winerybooks.com",
+  "repo": "alexgateley/winerybooks-social",
+  "timezone": "America/Los_Angeles",
+  "post": {
+    "hour": 12,
+    "label": "12 PM",
+    "days": ["Mon", "Wed", "Fri"],
+    "schedule": "posts/schedule.json"
+  },
+  "pagesBaseUrl": "https://alexgateley.github.io/winerybooks-social",
+  "postsDir": "posts",
+  "publishedDir": "published",
+  "prune": {
+    "afterDays": 30,
+    "files": ["reel.mp4", "cover.jpg"]
+  },
+  "hashtagRules": {
+    "maxPerPost": 5
+  }
+}

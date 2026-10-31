@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+
+# Secrets never go in this repository: GitHub Pages serves every committed file publicly
+.env
+.env.*
+new-token.txt
+token.txt
+tokens.txt
+*.token
+*-token.txt
+*_token.txt

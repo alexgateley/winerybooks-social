@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- PROPOSED, not installed. Kicks the "Post @TheWineryBooks" workflow at 12:05 PM and 2:05 PM on Monday,
+       Wednesday and Friday (the Mac's local time, which must be America/Los_Angeles, the same zone as
+       brand.json), because GitHub's own cron is unreliable on a quiet repository. The workflow posts
+       only a date listed in posts/schedule.json, only from noon Pacific, and only once, so with an
+       empty schedule these kicks post nothing. launchd runs a missed calendar job at the next wake.
+
+       The command is written out here, not read from a file in the repository, so that the agent
+       does not depend on where a clone lives. scripts/kick-post.sh does the same by hand.
+
+       Install:   curl -fsSL https://raw.githubusercontent.com/alexgateley/winerybooks-social/main/launchd/com.winerybooks.post.plist -o ~/Library/LaunchAgents/com.winerybooks.post.plist
+                  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.winerybooks.post.plist
+       Log:       ~/Library/Logs/winerybooks-social.log
+       Uninstall: launchctl bootout gui/$(id -u)/com.winerybooks.post -->
+  <key>Label</key>
+  <string>com.winerybooks.post</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>LOG="$HOME/Library/Logs/winerybooks-social.log"; mkdir -p "$HOME/Library/Logs"; n=0; until curl -s -o /dev/null --max-time 5 https://api.github.com/ || [ $n -ge 12 ]; do n=$((n+1)); sleep 10; done; if out=$(gh workflow run "Post @TheWineryBooks" --repo alexgateley/winerybooks-social -f dry_run=false 2&gt;&amp;1); then echo "$(date '+%Y-%m-%d %H:%M:%S %Z') kicked (agent): $out" &gt;&gt; "$LOG"; else echo "$(date '+%Y-%m-%d %H:%M:%S %Z') FAILED to kick (agent): $out" &gt;&gt; "$LOG"; exit 1; fi</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict>
+      <key>Weekday</key>
+      <integer>1</integer>
+      <key>Hour</key>
+      <integer>12</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>1</integer>
+      <key>Hour</key>
+      <integer>14</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>3</integer>
+      <key>Hour</key>
+      <integer>12</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>3</integer>
+      <key>Hour</key>
+      <integer>14</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>5</integer>
+      <key>Hour</key>
+      <integer>12</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+    <dict>
+      <key>Weekday</key>
+      <integer>5</integer>
+      <key>Hour</key>
+      <integer>14</integer>
+      <key>Minute</key>
+      <integer>5</integer>
+    </dict>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+  </dict>
+  <key>WorkingDirectory</key>
+  <string>/tmp</string>
+  <key>StandardOutPath</key>
+  <string>/Users/alex/Library/Logs/winerybooks-social.launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/alex/Library/Logs/winerybooks-social.launchd.log</string>
+  <key>RunAtLoad</key>
+  <false/>
+</dict>
+</plist>

@@ -1,0 +1,13 @@
+{
+  "name": "winerybooks-social",
+  "private": true,
+  "type": "module",
+  "description": "Three Reels a week for @TheWineryBooks: served from GitHub Pages, published by GitHub Actions",
+  "scripts": {
+    "prune": "node scripts/prune.mjs",
+    "publish:dry": "DRY_RUN=true node scripts/publish.mjs",
+    "mark": "node scripts/publish.mjs mark",
+    "check": "node scripts/publish.mjs check",
+    "test": "node --test"
+  }
+}

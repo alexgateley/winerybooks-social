@@ -144,5 +144,7 @@ jobs:
           if [ -s new-token.txt ]; then
             gh secret set IG_ACCESS_TOKEN --repo "$GITHUB_REPOSITORY" < new-token.txt
             echo "Stored the refreshed token"
+            rm -f new-token.txt
+            sh scripts/record-token-expiry.sh || echo "::warning::Could not record the token date"
           fi
           rm -f new-token.txt
